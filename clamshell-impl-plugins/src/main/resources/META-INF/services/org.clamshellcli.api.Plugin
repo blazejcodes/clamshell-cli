@@ -1,3 +1,4 @@
 org.clamshellcli.impl.CliShell
 org.clamshellcli.impl.CliConsole
+org.clamshellcli.impl.FilesystemCommandLoader
 org.clamshellcli.impl.CmdController
