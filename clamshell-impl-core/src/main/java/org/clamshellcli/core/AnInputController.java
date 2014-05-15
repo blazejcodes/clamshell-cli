@@ -15,73 +15,73 @@
  */
 package org.clamshellcli.core;
 
-import org.clamshellcli.api.Command;
-import org.clamshellcli.api.Configurator;
-import org.clamshellcli.api.Context;
-import org.clamshellcli.api.InputController;
-import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
 
+import org.clamshellcli.api.Command;
+import org.clamshellcli.api.InputController;
+
 /**
- * This is an abstract implementation of the InputController.
- * It's designed to be the starting point of any concrete implementation.
- * It provides common services that you will need in any controller impl.
+ * This is an abstract implementation of the InputController. It's designed to
+ * be the starting point of any concrete implementation. It provides common
+ * services that you will need in any controller impl.
  * 
  * @author vladimir.vivien
  */
-public abstract class AnInputController implements InputController{
-    private Pattern pattern;
-    private Boolean enabled = Boolean.TRUE;
-    
-    @Override
-    public Boolean isEnabled(){
-        return enabled;
-    }
-    
-    @Override
-    public void setEnabled(Boolean flag){
-        enabled = flag;
-    }
-    
-    @Override
-    public Pattern respondsTo() {
-        return pattern;
-    }
-    
-    @Override
-    public void setInputPattern(Pattern p){
-        pattern = p;
-    }
-    
-    /**
-     * This method collects the hints that are attached to a command
-     * and format them as "cmdName", "cmdName option1", "cmdName option2", etc.
-     * @param cmd the command to document
-     * @return a Set<String> containing the hints.
-     */
-    protected Set<String> collectInputHints(Command cmd){
-        Command.Descriptor desc  = cmd.getDescriptor();
-        if(desc == null ) return null;
-        
-        Set<String> result = new TreeSet<String>();
-        String cmdName = desc.getName();
-        result.add(desc.getName());
-        
-        Map<String,String> args =  desc.getArguments();
-        if(args != null){
-            for(String hint : args.keySet()){
-                // split hints in case they are as "option1, option2, etc"
-                String[] hintSet = hint.split("\\s*,\\s*");
-                for(String hintVal : hintSet){
-                    result.add(String.format("%s %s", cmdName, hintVal));
-                }
-            }
-        }
-        
-        return result;
-    }
+public abstract class AnInputController implements InputController {
+	private Pattern pattern;
+	private Boolean enabled = Boolean.TRUE;
+
+	@Override
+	public Boolean isEnabled() {
+		return enabled;
+	}
+
+	@Override
+	public void setEnabled(Boolean flag) {
+		enabled = flag;
+	}
+
+	@Override
+	public Pattern respondsTo() {
+		return pattern;
+	}
+
+	@Override
+	public void setInputPattern(Pattern p) {
+		pattern = p;
+	}
+
+	/**
+	 * This method collects the hints that are attached to a command and format
+	 * them as "cmdName", "cmdName option1", "cmdName option2", etc.
+	 * 
+	 * @param cmd
+	 *            the command to document
+	 * @return a Set<String> containing the hints.
+	 */
+	protected Set<String> collectInputHints(Command cmd) {
+		Command.Descriptor desc = cmd.getDescriptor();
+		if (desc == null)
+			return null;
+
+		Set<String> result = new TreeSet<String>();
+		String cmdName = desc.getName();
+		result.add(desc.getName());
+
+		Map<String, String> args = desc.getArguments();
+		if (args != null) {
+			for (String hint : args.keySet()) {
+				// split hints in case they are as "option1, option2, etc"
+				String[] hintSet = hint.split("\\s*,\\s*");
+				for (String hintVal : hintSet) {
+					result.add(String.format("%s %s", cmdName, hintVal));
+				}
+			}
+		}
+
+		return result;
+	}
 }

@@ -122,4 +122,5 @@ public interface IOConsole extends Plugin{
      * Closes console upon shutdown.
      */
     public void close();
+
 }

@@ -5,12 +5,12 @@
     <parent>
         <groupId>org.clamshellcli</groupId>
         <artifactId>clamshell</artifactId>
-        <version>0.5.2</version>
+        <version>0.5.3-SNAPSHOT</version>
     </parent>
   
     <groupId>org.clamshellcli</groupId>
     <artifactId>clamshell-impl-commands</artifactId>
-    <version>0.5.2</version>
+    <version>0.5.3-SNAPSHOT</version>
     <name>clamshell-impl-commands</name>
   
     <build>

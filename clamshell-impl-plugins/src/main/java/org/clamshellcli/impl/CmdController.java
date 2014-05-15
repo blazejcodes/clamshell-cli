@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import jline.console.ConsoleReader;
@@ -27,6 +28,7 @@ import jline.console.completer.NullCompleter;
 import org.clamshellcli.api.Command;
 import org.clamshellcli.api.CommandLoader;
 import org.clamshellcli.api.Context;
+import org.clamshellcli.api.IOConsole;
 import org.clamshellcli.core.AnInputController;
 
 /**
@@ -54,16 +56,13 @@ import org.clamshellcli.core.AnInputController;
  */
 public class CmdController extends AnInputController {
 
+	private static final String DEFAULT_RESPONDS_TO_REGEX = ":(?<command>.*)\\b";
+	private static final Pattern DEFAULT_RESPONDS_TO = Pattern.compile(DEFAULT_RESPONDS_TO_REGEX);
+
 	private Map<String, Command> commands;
-	private String respondsToRegEx = "(.*)\\b";
-	private Pattern respondsTo = Pattern.compile(respondsToRegEx);
 
 	public CmdController() {
-	}
-
-	@Override
-	public Pattern respondsTo() {
-		return respondsTo;
+		setInputPattern(DEFAULT_RESPONDS_TO);
 	}
 
 	/**
@@ -80,7 +79,13 @@ public class CmdController extends AnInputController {
 		boolean handled = false;
 
 		// handle command line entry. NOTE: value can be null
-		if (cmdLine != null && !cmdLine.trim().isEmpty() && respondsTo.matcher(cmdLine).matches()) {
+		Matcher matcher = respondsTo().matcher(cmdLine);
+		if (cmdLine != null && !cmdLine.trim().isEmpty() && matcher.matches()) {
+
+			if (matcher.group("command") != null) {
+				cmdLine = matcher.group("command");
+			}
+
 			String[] tokens = cmdLine.trim().split("\\s+");
 			if (commands != null && !commands.isEmpty()) {
 				Command cmd = commands.get(tokens[0]);
@@ -94,11 +99,11 @@ public class CmdController extends AnInputController {
 						cmd.execute(ctx);
 					} catch (Exception ex) {
 						ctx.getIoConsole().printf("WARNING: unable to execute command: [%s]%n%s%n", cmdLine,
-								ex.getMessage());
+						        ex.getMessage());
 					}
 				} else {
 					ctx.getIoConsole().printf(
-							"%nCommand [%s] is unknown. " + "Type help for a list of installed commands.", tokens[0]);
+					        "%nCommand [%s] is unknown. " + "Type help for a list of installed commands.", tokens[0]);
 				}
 				handled = true;
 			}
@@ -121,12 +126,17 @@ public class CmdController extends AnInputController {
 			plug.putValue(Context.KEY_COMMANDS, allCmds);
 			commands = plug.mapCommands(allCmds);
 			CmdCompleter completer = new CmdCompleter(allCmds);
-			ConsoleReader console = ((CliConsole) plug.getIoConsole()).getReader();
-			console.addCompleter(completer);
-			console.addCompleter(NullCompleter.INSTANCE);
+
+			IOConsole ioConsole = plug.getIoConsole();
+
+			if (ioConsole instanceof CliConsole) {
+				ConsoleReader console = ((CliConsole) ioConsole).getReader();
+				console.addCompleter(completer);
+				console.addCompleter(NullCompleter.INSTANCE);
+			}
 		} else {
 			plug.getIoConsole().printf("%nNo commands were found for input controller [%s].%n",
-					this.getClass().getName());
+			        this.getClass().getName());
 		}
 	}
 

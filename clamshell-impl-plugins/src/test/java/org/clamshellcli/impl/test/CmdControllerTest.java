@@ -17,16 +17,21 @@ import org.junit.Test;
 public class CmdControllerTest {
 
 	@Test
-	public void testExtractCmdFromInput() {
+	public void testExtractPrefixedCmdFromInput() {
 
 		CmdController controller = new CmdController();
 
 		MockContext ctx = MockContext.createInstance();
-		ctx.setPlugins(Arrays.<Plugin> asList(new MockCommandLoader(Arrays.<Command> asList(new MockCommand()))));
+		ctx.setPlugins(Arrays.<Plugin> asList(new MockCommandLoader(Arrays.<Command> asList(new MockCommand(){
+
+			@Override
+            public Object execute(Context ctx) {
+	            return "";
+            }}))));
 
 		controller.plug(ctx);
 
-		controller.setInputPattern(Pattern.compile("^:(?<command>.*)"));
+		controller.setInputPattern(Pattern.compile("\\:(?<command>.*)"));
 
 		ctx.putValue(Context.KEY_COMMAND_LINE_INPUT, ":mock");
 

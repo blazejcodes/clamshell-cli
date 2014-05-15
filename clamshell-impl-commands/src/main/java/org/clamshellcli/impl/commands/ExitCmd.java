@@ -16,11 +16,11 @@
 
 package org.clamshellcli.impl.commands;
 
-import org.clamshellcli.api.Command;
-import org.clamshellcli.api.Configurator;
-import org.clamshellcli.api.Context;
 import java.util.Collections;
 import java.util.Map;
+
+import org.clamshellcli.api.Command;
+import org.clamshellcli.api.Context;
 
 /**
  * This class responds to the the "exit" command
